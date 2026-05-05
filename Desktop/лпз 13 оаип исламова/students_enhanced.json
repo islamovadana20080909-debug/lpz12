@@ -1,0 +1,51 @@
+[
+    {
+        "full_name": "Иван Петров",
+        "group": "ПИН-231",
+        "age": 19,
+        "average_score": 4.5,
+        "status": "отличник"
+    },
+    {
+        "full_name": "Анна Сидорова",
+        "group": "ПИН-231",
+        "age": 20,
+        "average_score": 4.8,
+        "status": "отличник"
+    },
+    {
+        "full_name": "Петр Иванов",
+        "group": "ПИН-232",
+        "age": 18,
+        "average_score": 3.9,
+        "status": "хорошист"
+    },
+    {
+        "full_name": "Мария Кузнецова",
+        "group": "ПИН-232",
+        "age": 19,
+        "average_score": 4.9,
+        "status": "отличник"
+    },
+    {
+        "full_name": "Алексей Смирнов",
+        "group": "ПИН-231",
+        "age": 20,
+        "average_score": 4.2,
+        "status": "хорошист"
+    },
+    {
+        "full_name": "Елена Попова",
+        "group": "ПИН-233",
+        "age": 19,
+        "average_score": 5.0,
+        "status": "отличник"
+    },
+    {
+        "full_name": "Дмитрий Васильев",
+        "group": "ПИН-233",
+        "age": 21,
+        "average_score": 3.7,
+        "status": "хорошист"
+    }
+]
