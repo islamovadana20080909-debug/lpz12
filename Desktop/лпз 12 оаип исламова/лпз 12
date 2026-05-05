@@ -1,0 +1,256 @@
+import re
+
+
+def validate_email(email: str):
+    """
+    Проверяет корректность email адреса.
+    """
+    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    if re.match(pattern, email):
+        return True, "✅ Email корректный"
+    return False, "❌ Неправильный email! Пример: name@mail.ru"
+
+
+def validate_phone(phone: str):
+    """
+    Проверяет корректность номера телефона.
+    Поддерживаемые форматы:
+    +7-999-123-45-67, +7 999 123 45 67, +79991234567,
+    8-999-123-4567, 8 999 123 4567, 89991234567
+    """
+    phone = phone.strip()
+    patterns = [
+        r'^\+7-\d{3}-\d{3}-\d{2}-\d{2}$',
+        r'^\+7 \d{3} \d{3} \d{2} \d{2}$',
+        r'^\+7\d{10}$',
+        r'^8-\d{3}-\d{3}-\d{4}$',
+        r'^8 \d{3} \d{3} \d{4}$',
+        r'^8\d{10}$'
+    ]
+    for pattern in patterns:
+        if re.match(pattern, phone):
+            clean = re.sub(r'\D', '', phone)
+            if clean.startswith('8'):
+                clean = '+7' + clean[1:]
+            elif clean.startswith('7'):
+                clean = '+' + clean
+            return True, "✅ Телефон корректный", clean
+    return False, "❌ Неправильный телефон! Пример: +7-999-123-45-67", None
+
+
+def validate_inn(inn: str):
+    """
+    Проверяет корректность ИНН:
+    10 цифр — организация, 12 цифр — физ. лицо
+    """
+    inn = inn.strip()
+    if not inn.isdigit():
+        return False, "❌ ИНН должен содержать только цифры!"
+    if len(inn) == 10:
+        return True, "✅ ИНН организации корректен (10 цифр)"
+    elif len(inn) == 12:
+        return True, "✅ ИНН физического лица корректен (12 цифр)"
+    else:
+        return False, "❌ ИНН должен содержать 10 или 12 цифр!"
+
+
+def validate_passport(passport: str):
+    """
+    Доп. задание: проверка паспорта.
+    Формат: 45 03 123456 (2 цифры, пробел, 2 цифры, пробел, 6 цифр)
+    """
+    pattern = r'^\d{2} \d{2} \d{6}$'
+    if re.match(pattern, passport):
+        return True, "✅ Паспорт корректен"
+    return False, "❌ Неправильный паспорт! Формат: 45 03 123456"
+
+
+def find_emails(text: str):
+    """Находит все email-адреса в тексте."""
+    pattern = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
+    return re.findall(pattern, text)
+
+
+def find_phones(text: str):
+    """Находит все номера телефонов в тексте."""
+    pattern = r'\+7[- ]?\d{3}[- ]?\d{3}[- ]?\d{2}[- ]?\d{2}|8[- ]?\d{3}[- ]?\d{3}[- ]?\d{4}'
+    return re.findall(pattern, text)
+
+
+def find_dates(text: str):
+    """Находит все даты в формате ДД.ММ.ГГГГ или ДД/ММ/ГГГГ."""
+    pattern = r'\d{2}[./]\d{2}[./]\d{4}'
+    return re.findall(pattern, text)
+
+
+def find_prices(text: str):
+    """Находит цены (число + руб, ₽, $, €)."""
+    pattern = r'\d+(?:[.,]\d+)?\s?(?:руб|₽|\$|€)'
+    return re.findall(pattern, text)
+
+
+def find_urls(text: str):
+    """Находит ссылки (http, https, www)."""
+    pattern = r'https?://[a-zA-Z0-9./?=_-]+|www\.[a-zA-Z0-9./?=_-]+'
+    return re.findall(pattern, text)
+
+
+def find_ip_addresses(text: str):
+    """Доп. задание: поиск IP-адресов (0-255.0-255.0-255.0-255)."""
+    pattern = r'\b(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b'
+    return re.findall(pattern, text)
+
+
+def find_hashtags(text: str):
+    """Доп. задание: поиск хэштегов (#слово)."""
+    pattern = r'#[a-zA-Zа-яА-Я0-9_]+'
+    return re.findall(pattern, text, re.UNICODE)
+
+
+
+def main():
+    print("=" * 50)
+    print("ПРОГРАММА ВАЛИДАЦИИ И ПОИСКА ДАННЫХ (regex)")
+    print("=" * 50)
+
+    while True:
+        print("\nМеню:")
+        print("1. Проверить email")
+        print("2. Проверить телефон")
+        print("3. Проверить ИНН")
+        print("4. Проверить паспорт (ДЗ)")
+        print("5. Поиск данных в тексте")
+        print("0. Выход")
+
+        choice = input("\nВыберите действие: ").strip()
+
+        if choice == "0":
+            print("До свидания!")
+            break
+
+        elif choice == "1":
+            email = input("Введите email: ")
+            valid, msg = validate_email(email)
+            print(msg)
+
+        elif choice == "2":
+            phone = input("Введите телефон: ")
+            valid, msg, clean = validate_phone(phone)
+            print(msg)
+            if valid:
+                print(f"Очищенный номер: {clean}")
+
+        elif choice == "3":
+            inn = input("Введите ИНН: ")
+            valid, msg = validate_inn(inn)
+            print(msg)
+
+        elif choice == "4":
+            passport = input("Введите паспорт (формат: 45 03 123456): ")
+            valid, msg = validate_passport(passport)
+            print(msg)
+
+        elif choice == "5":
+            print("\nВведите текст (несколько строк, Enter дважды для завершения):")
+            lines = []
+            while True:
+                line = input()
+                if line == "" and len(lines) > 0 and lines[-1] == "":
+                    break
+                lines.append(line)
+            text = "\n".join(lines)
+
+            print("\n" + "=" * 50)
+            print("РЕЗУЛЬТАТЫ ПОИСКА:")
+            print("=" * 50)
+
+            emails = find_emails(text)
+            if emails:
+                print(f"📧 Email: {emails}")
+
+            phones = find_phones(text)
+            if phones:
+                print(f"📞 Телефоны: {phones}")
+
+            dates = find_dates(text)
+            if dates:
+                print(f"📅 Даты: {dates}")
+
+            prices = find_prices(text)
+            if prices:
+                print(f"💰 Цены: {prices}")
+
+            urls = find_urls(text)
+            if urls:
+                print(f"🔗 Ссылки: {urls}")
+
+            ips = find_ip_addresses(text)
+            if ips:
+                print(f"🌐 IP-адреса: {ips}")
+
+            hashtags = find_hashtags(text)
+            if hashtags:
+                print(f"🏷️ Хэштеги: {hashtags}")
+
+            if not (emails or phones or dates or prices or urls or ips or hashtags):
+                print("Ничего не найдено")
+
+        else:
+            print("Неверный выбор!")
+
+
+
+def run_tests():
+    print("\n" + "=" * 50)
+    print("ТЕСТИРОВАНИЕ ФУНКЦИЙ")
+    print("=" * 50)
+
+    print("\n--- Проверка email ---")
+    for email in ["user@mail.ru", "test@gmail.com", "invalid-email", "user@domain"]:
+        valid, msg = validate_email(email)
+        print(f"{email}: {msg}")
+
+    print("\n--- Проверка телефона ---")
+    for phone in ["+7-999-123-45-67", "+7 999 123 45 67", "+79991234567", "8-999-123-4567", "12345"]:
+        valid, msg, clean = validate_phone(phone)
+        print(f"{phone}: {msg}")
+
+    print("\n--- Проверка ИНН ---")
+    for inn in ["7712345678", "123456789012", "12345", "12a34567890"]:
+        valid, msg = validate_inn(inn)
+        print(f"{inn}: {msg}")
+
+    print("\n--- Проверка паспорта ---")
+    for passport in ["45 03 123456", "1234 567890", "12 34 123456"]:
+        valid, msg = validate_passport(passport)
+        print(f"{passport}: {msg}")
+
+    print("\n--- Поиск email ---")
+    text = "Мои контакты: ivan@mail.ru и petr@gmail.com, а также admin@site.ru"
+    print("Текст:", text)
+    print("Найдено:", find_emails(text))
+
+    print("\n--- Поиск телефонов ---")
+    text = "Звоните: +7-999-123-45-67 или 8 800 555 35 35"
+    print("Найдено:", find_phones(text))
+
+    print("\n--- Поиск дат ---")
+    text = "Встреча 15.05.2025, дедлайн 20/12/2026"
+    print("Найдено:", find_dates(text))
+
+    print("\n--- Поиск цен ---")
+    text = "Ноутбук 50000 руб, мышь 1500₽, наушники $80"
+    print("Найдено:", find_prices(text))
+
+    print("\n--- Поиск IP-адресов ---")
+    text = "Сервер 192.168.1.1, шлюз 10.0.0.1, неверный 999.999.999.999"
+    print("Найдено:", find_ip_addresses(text))
+
+    print("\n--- Поиск хэштегов ---")
+    text = "#python #программирование #regex2024"
+    print("Найдено:", find_hashtags(text))
+
+
+if __name__ == "__main__":
+    run_tests()
+    main()
